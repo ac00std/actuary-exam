@@ -76,6 +76,21 @@ cor.test(rate_ln[,1],rate_ln[,5], method = "kendall")
  plot(rate,main="合格率の散布図（ロジット変換前）")
  plot(rate_ln,main="合格率の散布図（ロジット変換後）")
 
+#MT法による異常値検出
+n=nrow(rate_ln)	# 単位空間のサンプル数を計算
+Ave= colMeans(rate_ln) # 単位空間の各変数の平均値を計算
+Var=var(rate_ln)*(n-1)/n # 単位空間の共分散行列を計算
+k=ncol(rate_ln)	# 変数の数を計算
+MD=mahalanobis(rate_ln, Ave, Var)/k	# 単位空間のMDの２乗を計算
+plot(MD)
+
+windows()
+par(mfrow=c(2,1)) 
+#マハラビノス距離=3
+pairs(rate_ln, pch=21, bg=c("red","blue")[(MD>3)+1],main="マハラノビス距離を用いた異常値検出")
+#マハラビノス距離=1.5
+pairs(rate_ln, pch=21, bg=c("red","blue")[(MD>1.5)+1],main="マハラノビス距離を用いた異常値検出")
+
 ##VAR
 library(vars)
 VARselect(exam[,1:10],lag.max=1)
